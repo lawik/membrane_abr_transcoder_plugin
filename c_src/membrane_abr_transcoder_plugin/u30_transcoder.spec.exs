@@ -34,4 +34,11 @@ spec process(payload, frames_gap :: int, state) ::
 
 spec flush(state) :: {:ok :: label, [stream_frame]} | {:error :: label, reason :: string}
 
-dirty :cpu, create: 3, process: 2, flush: 1
+dirty :io,
+  initialize: 1
+
+dirty :cpu,
+  create: 3,
+  process: 3,
+  update_sps_and_pps: 2,
+  flush: 1
