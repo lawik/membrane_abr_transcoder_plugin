@@ -1,4 +1,5 @@
 #include "xilinx_decoding_pipeline.h"
+#include "../padded_input.h"
 #include "xilinx_vcu_decoder_dummy_ctx.h"
 
 #include <stdexcept>
@@ -77,8 +78,9 @@ XilinxDecodingPipeline::~XilinxDecodingPipeline() {
 }
 
 void XilinxDecodingPipeline::Process(const uint8_t* payload, size_t size) {
-  const uint8_t* data = payload;
-  size_t data_size = size;
+  PaddedInput input(payload, size);
+  const uint8_t* data = input.data;
+  size_t data_size = input.size;
 
   while (data_size > 0) {
     int ret = av_parser_parse2(parser,
@@ -169,8 +171,9 @@ void XilinxDecodingPipeline::OnFrameGap(uint32_t frame_gap) {
 
 void XilinxDecodingPipeline::OnStreamParameters(const uint8_t* payload,
                                                 size_t size) {
-  const uint8_t* data = payload;
-  size_t data_size = size;
+  PaddedInput input(payload, size);
+  const uint8_t* data = input.data;
+  size_t data_size = input.size;
 
   while (data_size > 0) {
     int ret = av_parser_parse2(parser,

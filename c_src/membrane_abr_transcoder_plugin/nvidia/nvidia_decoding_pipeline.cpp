@@ -1,4 +1,5 @@
 #include "nvidia_decoding_pipeline.h"
+#include "../padded_input.h"
 
 #include <stdexcept>
 
@@ -59,8 +60,9 @@ NvidiaDecodingPipeline::~NvidiaDecodingPipeline() {
 }
 
 void NvidiaDecodingPipeline::Process(const uint8_t* payload, size_t size) {
-  const uint8_t* data = payload;
-  size_t data_size = size;
+  PaddedInput input(payload, size);
+  const uint8_t* data = input.data;
+  size_t data_size = input.size;
 
   while (data_size > 0) {
     int ret = av_parser_parse2(parser,
@@ -156,8 +158,9 @@ void NvidiaDecodingPipeline::OnFrameGap(uint32_t frame_gap) {
 
 void NvidiaDecodingPipeline::OnStreamParameters(const uint8_t* payload,
                                                 size_t size) {
-  const uint8_t* data = payload;
-  size_t data_size = size;
+  PaddedInput input(payload, size);
+  const uint8_t* data = input.data;
+  size_t data_size = input.size;
 
   while (data_size > 0) {
     int ret = av_parser_parse2(parser,
